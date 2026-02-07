@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Progress Analyzer</title>
+
+<style>
+body{
+  font-family: Arial, sans-serif;
+  background:#f4f6f9;
+  margin:0;
+}
+header{
+  background:#0f172a;
+  color:#fff;
+  padding:20px;
+  text-align:center;
+}
+.container{
+  padding:20px;
+  max-width:1100px;
+  margin:auto;
+}
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:8px;
+  margin-bottom:20px;
+  box-shadow:0 2px 6px rgba(0,0,0,.1);
+}
+h2{margin-top:0;color:#0f172a}
+input,select,button{
+  padding:10px;
+  width:100%;
+  margin-bottom:10px;
+}
+button{
+  background:#2563eb;
+  color:white;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+button:hover{background:#1d4ed8}
+.student{
+  border-bottom:1px solid #ddd;
+  padding:10px 0;
+}
+.progress-good{color:green}
+.progress-bad{color:red}
+.progress-stable{color:#555}
+canvas{
+  background:#f9fafb;
+  border:1px solid #ddd;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Student Progress Analyzer</h1>
+<p>Teacher Friendly Academic Tracking System</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h2>Admission / Add Student</h2>
+<input id="name" placeholder="Student Name">
+<select id="gender">
+  <option>Boys</option>
+  <option>Girls</option>
+</select>
+<select id="class">
+  <option>Class 6</option>
+  <option>Class 7</option>
+  <option>Class 8</option>
+</select>
+<button onclick="addStudent()">Add Student</button>
+</div>
+
+<div class="card">
+<h2>Add Monthly Marks</h2>
+<select id="studentSelect"></select>
+<select id="month">
+  <option>January</option>
+  <option>February</option>
+  <option>March</option>
+</select>
+<input id="subject" placeholder="Subject">
+<input id="marks" type="number" placeholder="Marks (out of 100)">
+<button onclick="addMarks()">Save Marks</button>
+</div>
+
+<div class="card">
+<h2>Student Progress</h2>
+<div id="students"></div>
+</div>
+
+</div>
+
+<script>
+let students=[];
+
+function addStudent(){
+  let name=document.getElementById("name").value.trim();
+  if(!name){alert("Enter name");return;}
+  students.push({
+    name,
+    gender:gender.value,
+    className:document.getElementById("class").value,
+    records:{}
+  });
+  name.value="";
+  updateSelect();
+  render();
+}
+
+function updateSelect(){
+  studentSelect.innerHTML="";
+  students.forEach((s,i)=>{
+    let o=document.createElement("option");
+    o.value=i;
+    o.text=s.name+" ("+s.className+")";
+    studentSelect.add(o);
+  });
+}
+
+function addMarks(){
+  let s=students[studentSelect.value];
+  let m=month.value;
+  let sub=subject.value;
+  let mark=Number(marks.value);
+  if(!sub||!mark){alert("Fill all");return;}
+  if(!s.records[m]) s.records[m]={};
+  s.records[m][sub]=mark;
+  subject.value="";marks.value="";
+  render();
+}
+
+function grade(p){
+  if(p>=80) return "A";
+  if(p>=65) return "B";
+  if(p>=50) return "C";
+  return "D";
+}
+
+function render(){
+  studentsDiv.innerHTML="";
+  students.forEach(s=>{
+    let months=Object.keys(s.records);
+    let latest=months[months.length-1];
+    let prev=months[months.length-2];
+    let total=0,count=0;
+    if(latest){
+      for(let k in s.records[latest]){
+        total+=s.records[latest][k];count++;
+      }
+    }
+    let perc=count?Math.round(total/count):0;
+    let diff=0;
+    if(prev){
+      let t=0,c=0;
+      for(let k in s.records[prev]){
+        t+=s.records[prev][k];c++;
+      }
+      diff=perc-Math.round(t/c);
+    }
+    let status=diff>0?"Improved":"Stable";
+    let cls="progress-stable";
+    if(diff>0)cls="progress-good";
+    if(diff<0){status="Declined";cls="progress-bad";}
+    let div=document.createElement("div");
+    div.className="student";
+    div.innerHTML=`
+      <strong>${s.name}</strong> (${s.gender}, ${s.className})<br>
+      Percentage: ${perc}% | Grade: ${grade(perc)}
+      <span class="${cls}">(${status})</span>
+      <canvas width="300" height="100"></canvas>
+    `;
+    studentsDiv.appendChild(div);
+    draw(div.querySelector("canvas"),months,s.records);
+  });
+}
+
+function draw(c,months,rec){
+  let ctx=c.getContext("2d");
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.beginPath();ctx.moveTo(20,80);
+  months.forEach((m,i)=>{
+    let t=0,cnt=0;
+    for(let k in rec[m]){t+=rec[m][k];cnt++;}
+    let p=cnt?t/cnt:0;
+    let x=20+i*80;
+    let y=80-p*0.6;
+    ctx.lineTo(x,y);
+    ctx.fillText(m[0],x-5,95);
+  });
+  ctx.strokeStyle="#2563eb";
+  ctx.stroke();
+}
+</script>
+
+</body>
+</html>
