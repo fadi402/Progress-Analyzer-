@@ -2,163 +2,106 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Kernel Fadi — Secure Login</title>
+<title>Kernel Fadi | Secure Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family: system-ui, -apple-system, Segoe UI, sans-serif;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 
 body{
     height:100vh;
-    background: radial-gradient(circle at top, #0f0f0f, #000 70%);
+    background:#050505;
     overflow:hidden;
     color:#fff;
 }
 
-/* ===== BRAND ===== */
+/* Branding */
 .brand{
     position:absolute;
-    top:22px;
-    right:35px;
-    font-size:26px;
+    top:24px;
+    right:40px;
+    font-size:18px;
+    letter-spacing:3px;
     font-weight:700;
-    letter-spacing:4px;
-    color:#cfd3d7;
+    color:#cfd3d6;
     text-transform:uppercase;
-    text-shadow:
-        0 0 10px rgba(180,180,180,0.4),
-        0 0 30px rgba(120,120,120,0.25);
 }
 
-/* ===== LOGIN BOX ===== */
-.login-box{
+/* Login Box */
+.login{
     position:absolute;
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
     width:360px;
-    padding:38px;
-    background:rgba(18,18,18,0.78);
-    backdrop-filter: blur(16px);
+    padding:40px;
+    background:rgba(15,15,15,0.75);
+    backdrop-filter:blur(18px);
     border-radius:16px;
-    box-shadow:0 0 60px rgba(0,0,0,0.95);
     border:1px solid rgba(255,255,255,0.08);
+    box-shadow:0 0 60px rgba(0,0,0,0.9);
 }
 
-.login-box h2{
+.login h2{
     text-align:center;
-    margin-bottom:26px;
-    font-weight:500;
+    margin-bottom:28px;
+    font-weight:600;
     letter-spacing:1px;
 }
 
-.login-box input{
+.login input{
     width:100%;
-    padding:13px;
+    padding:14px;
     margin:14px 0;
-    background:#0b0b0b;
-    border:1px solid #2a2a2a;
-    border-radius:9px;
+    background:#0a0a0a;
+    border-radius:10px;
+    border:1px solid #222;
     color:#fff;
     outline:none;
+    box-shadow:0 0 0 rgba(120,120,120,0);
+    transition:0.3s;
 }
 
-.login-box input::placeholder{
-    color:#8b8b8b;
-    text-shadow:0 0 6px rgba(140,140,255,0.5);
-    animation: glowText 2.5s infinite alternate;
+.login input:focus{
+    border-color:#777;
+    box-shadow:0 0 14px rgba(150,150,150,0.35);
 }
 
-@keyframes glowText{
-    from{ opacity:0.6; }
-    to{ opacity:1; }
-}
-
-.login-box button{
-    width:100%;
+.login button{
     margin-top:20px;
-    padding:13px;
+    width:100%;
+    padding:14px;
+    background:linear-gradient(135deg,#3a3a3a,#1a1a1a);
     border:none;
-    border-radius:9px;
-    background:linear-gradient(135deg,#3b3b3b,#1f1f1f);
+    border-radius:10px;
     color:#fff;
     font-size:15px;
     cursor:pointer;
     transition:0.3s;
 }
+.login button:hover{background:linear-gradient(135deg,#5a5a5a,#2a2a2a);}
 
-.login-box button:hover{
-    background:linear-gradient(135deg,#5a5a5a,#2a2a2a);
-}
-
-/* ===== SPIDER ===== */
-.spider{
+/* Spider Container */
+#spiderWrap{
     position:absolute;
-    width:46px;
-    height:46px;
-    background:#6e6e6e;
-    border-radius:50%;
-    box-shadow:
-        -14px 14px 0 -10px #6e6e6e,
-        14px 14px 0 -10px #6e6e6e;
-    animation: moveSpider 20s linear infinite;
+    width:140px;
+    pointer-events:none;
 }
 
-.spider::before,
-.spider::after{
-    content:"";
-    position:absolute;
-    width:3px;
-    height:28px;
-    background:#6e6e6e;
-    top:26px;
-    animation: legs 0.6s infinite alternate;
-}
-
-.spider::before{
-    left:-10px;
-    transform:rotate(28deg);
-}
-
-.spider::after{
-    right:-10px;
-    transform:rotate(-28deg);
-}
-
-@keyframes legs{
-    from{ transform:rotate(18deg); }
-    to{ transform:rotate(32deg); }
-}
-
-@keyframes moveSpider{
-    0%   { top:12%; left:-15%; transform:scaleX(1); }
-    25%  { top:28%; left:110%; transform:scaleX(1); }
-    50%  { top:55%; left:110%; transform:scaleX(-1); }
-    75%  { top:78%; left:-15%; transform:scaleX(-1); }
-    100% { top:12%; left:-15%; transform:scaleX(1); }
-}
-
-/* ===== PARTICLES ===== */
+/* Particle trail */
 .particle{
     position:absolute;
     width:6px;
     height:6px;
-    background:linear-gradient(135deg,#ff4ecd,#4ecbff);
     transform:rotate(45deg);
     opacity:0.9;
-    animation: fadeOut 1.2s forwards;
+    animation:fade 1.2s linear forwards;
 }
 
-@keyframes fadeOut{
-    to{
-        opacity:0;
-        transform:translateY(10px) rotate(45deg);
-    }
+@keyframes fade{
+    to{opacity:0;transform:rotate(45deg) scale(0.2);}
 }
 </style>
 </head>
@@ -167,31 +110,66 @@ body{
 
 <div class="brand">Kernel Fadi</div>
 
-<div class="login-box">
+<div class="login">
     <h2>Secure Access</h2>
     <input type="text" placeholder="Username">
     <input type="password" placeholder="Password">
-    <button onclick="login()">Login</button>
+    <button>Login</button>
 </div>
 
-<div class="spider" id="spider"></div>
+<!-- Realistic SVG Spider -->
+<div id="spiderWrap">
+<svg width="140" height="120" viewBox="0 0 140 120">
+    <!-- legs -->
+    <g stroke="#6e6e6e" stroke-width="3" stroke-linecap="round">
+        <path d="M30 60 C5 40,5 30,10 20"/>
+        <path d="M30 70 C5 70,5 85,15 95"/>
+        <path d="M40 55 C15 35,20 20,30 10"/>
+        <path d="M40 75 C20 85,30 105,45 110"/>
+
+        <path d="M110 60 C135 40,135 30,130 20"/>
+        <path d="M110 70 C135 70,135 85,125 95"/>
+        <path d="M100 55 C125 35,120 20,110 10"/>
+        <path d="M100 75 C120 85,110 105,95 110"/>
+    </g>
+
+    <!-- body -->
+    <ellipse cx="70" cy="55" rx="18" ry="14" fill="#7a7a7a"/>
+    <ellipse cx="70" cy="78" rx="22" ry="18" fill="#5e5e5e"/>
+</svg>
+</div>
 
 <script>
-const spider = document.getElementById("spider");
+const spider = document.getElementById("spiderWrap");
+let dir = 1;
 
+function moveSpider(){
+    const h = window.innerHeight;
+    const y = Math.random()*(h-160)+40;
+    dir *= -1;
+
+    spider.style.transition = "none";
+    spider.style.top = y+"px";
+    spider.style.left = dir>0 ? "-160px" : window.innerWidth+160+"px";
+
+    setTimeout(()=>{
+        spider.style.transition = "left 18s linear";
+        spider.style.left = dir>0 ? window.innerWidth+160+"px" : "-160px";
+    },50);
+}
+moveSpider();
+setInterval(moveSpider,19000);
+
+/* particles */
 setInterval(()=>{
-    const rect = spider.getBoundingClientRect();
     const p = document.createElement("div");
-    p.className = "particle";
-    p.style.left = rect.left + 18 + "px";
-    p.style.top  = rect.top  + 18 + "px";
+    p.className="particle";
+    p.style.left = (spider.offsetLeft+70)+"px";
+    p.style.top = (spider.offsetTop+70)+"px";
+    p.style.background = `hsl(${Math.random()*360},70%,60%)`;
     document.body.appendChild(p);
     setTimeout(()=>p.remove(),1200);
-},120);
-
-function login(){
-    alert("Authentication backend not connected.");
-}
+},140);
 </script>
 
 </body>
