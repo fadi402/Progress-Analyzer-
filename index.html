@@ -10,71 +10,82 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family: "Segoe UI", sans-serif;
+    font-family: system-ui, -apple-system, Segoe UI, sans-serif;
 }
 
 body{
     height:100vh;
-    background: radial-gradient(circle at top, #111 0%, #000 70%);
+    background: radial-gradient(circle at top, #0f0f0f, #000 70%);
     overflow:hidden;
     color:#fff;
 }
 
-/* Kernel Fadi mark */
+/* ===== BRAND ===== */
 .brand{
     position:absolute;
-    top:20px;
-    right:30px;
-    font-size:14px;
-    letter-spacing:2px;
-    color:#9aa0a6;
-    opacity:0.9;
+    top:22px;
+    right:35px;
+    font-size:26px;
+    font-weight:700;
+    letter-spacing:4px;
+    color:#cfd3d7;
+    text-transform:uppercase;
+    text-shadow:
+        0 0 10px rgba(180,180,180,0.4),
+        0 0 30px rgba(120,120,120,0.25);
 }
 
-/* Login Card */
+/* ===== LOGIN BOX ===== */
 .login-box{
     position:absolute;
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
-    width:340px;
-    padding:35px;
-    background:rgba(20,20,20,0.75);
-    backdrop-filter: blur(14px);
-    border-radius:14px;
-    box-shadow:0 0 40px rgba(0,0,0,0.9);
+    width:360px;
+    padding:38px;
+    background:rgba(18,18,18,0.78);
+    backdrop-filter: blur(16px);
+    border-radius:16px;
+    box-shadow:0 0 60px rgba(0,0,0,0.95);
     border:1px solid rgba(255,255,255,0.08);
 }
 
 .login-box h2{
     text-align:center;
-    margin-bottom:25px;
+    margin-bottom:26px;
     font-weight:500;
     letter-spacing:1px;
 }
 
 .login-box input{
     width:100%;
-    padding:12px;
-    margin:12px 0;
+    padding:13px;
+    margin:14px 0;
     background:#0b0b0b;
     border:1px solid #2a2a2a;
-    border-radius:8px;
+    border-radius:9px;
     color:#fff;
     outline:none;
 }
 
-.login-box input:focus{
-    border-color:#555;
+.login-box input::placeholder{
+    color:#8b8b8b;
+    text-shadow:0 0 6px rgba(140,140,255,0.5);
+    animation: glowText 2.5s infinite alternate;
+}
+
+@keyframes glowText{
+    from{ opacity:0.6; }
+    to{ opacity:1; }
 }
 
 .login-box button{
     width:100%;
-    margin-top:18px;
-    padding:12px;
+    margin-top:20px;
+    padding:13px;
     border:none;
-    border-radius:8px;
-    background:linear-gradient(135deg,#444,#222);
+    border-radius:9px;
+    background:linear-gradient(135deg,#3b3b3b,#1f1f1f);
     color:#fff;
     font-size:15px;
     cursor:pointer;
@@ -82,58 +93,72 @@ body{
 }
 
 .login-box button:hover{
-    background:linear-gradient(135deg,#666,#333);
+    background:linear-gradient(135deg,#5a5a5a,#2a2a2a);
 }
 
-/* Spider */
+/* ===== SPIDER ===== */
 .spider{
     position:absolute;
-    width:26px;
-    height:26px;
-    background:#7a7a7a;
+    width:46px;
+    height:46px;
+    background:#6e6e6e;
     border-radius:50%;
     box-shadow:
-        -10px 8px 0 -6px #7a7a7a,
-        10px 8px 0 -6px #7a7a7a;
-    animation: crawl 22s linear infinite;
+        -14px 14px 0 -10px #6e6e6e,
+        14px 14px 0 -10px #6e6e6e;
+    animation: moveSpider 20s linear infinite;
 }
 
 .spider::before,
 .spider::after{
     content:"";
     position:absolute;
-    width:2px;
-    height:18px;
-    background:#7a7a7a;
-    top:14px;
+    width:3px;
+    height:28px;
+    background:#6e6e6e;
+    top:26px;
+    animation: legs 0.6s infinite alternate;
 }
 
 .spider::before{
-    left:-6px;
-    transform:rotate(25deg);
+    left:-10px;
+    transform:rotate(28deg);
 }
 
 .spider::after{
-    right:-6px;
-    transform:rotate(-25deg);
+    right:-10px;
+    transform:rotate(-28deg);
 }
 
-@keyframes crawl{
-    0%   { top:10%;  left:-10%; }
-    25%  { top:30%;  left:110%; }
-    50%  { top:60%;  left:-10%; }
-    75%  { top:85%;  left:110%; }
-    100% { top:10%;  left:-10%; }
+@keyframes legs{
+    from{ transform:rotate(18deg); }
+    to{ transform:rotate(32deg); }
 }
 
-/* Footer glow line */
-.glow{
+@keyframes moveSpider{
+    0%   { top:12%; left:-15%; transform:scaleX(1); }
+    25%  { top:28%; left:110%; transform:scaleX(1); }
+    50%  { top:55%; left:110%; transform:scaleX(-1); }
+    75%  { top:78%; left:-15%; transform:scaleX(-1); }
+    100% { top:12%; left:-15%; transform:scaleX(1); }
+}
+
+/* ===== PARTICLES ===== */
+.particle{
     position:absolute;
-    bottom:0;
-    left:0;
-    width:100%;
-    height:2px;
-    background:linear-gradient(90deg, transparent, #444, transparent);
+    width:6px;
+    height:6px;
+    background:linear-gradient(135deg,#ff4ecd,#4ecbff);
+    transform:rotate(45deg);
+    opacity:0.9;
+    animation: fadeOut 1.2s forwards;
+}
+
+@keyframes fadeOut{
+    to{
+        opacity:0;
+        transform:translateY(10px) rotate(45deg);
+    }
 }
 </style>
 </head>
@@ -149,12 +174,23 @@ body{
     <button onclick="login()">Login</button>
 </div>
 
-<div class="spider"></div>
-<div class="glow"></div>
+<div class="spider" id="spider"></div>
 
 <script>
+const spider = document.getElementById("spider");
+
+setInterval(()=>{
+    const rect = spider.getBoundingClientRect();
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.style.left = rect.left + 18 + "px";
+    p.style.top  = rect.top  + 18 + "px";
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1200);
+},120);
+
 function login(){
-    alert("Authentication system not connected.");
+    alert("Authentication backend not connected.");
 }
 </script>
 
