@@ -2,204 +2,227 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Student Progress Analyzer</title>
+<title>School Progress Analyzer</title>
 
 <style>
 body{
-  font-family: Arial, sans-serif;
-  background:#f4f6f9;
   margin:0;
+  font-family:Segoe UI, Arial, sans-serif;
+  background:#f1f5f9;
 }
 header{
   background:#0f172a;
-  color:#fff;
-  padding:20px;
+  color:white;
+  padding:16px;
   text-align:center;
 }
-.container{
+section{
+  display:none;
   padding:20px;
-  max-width:1100px;
-  margin:auto;
 }
+section.active{display:block}
 .card{
-  background:#fff;
+  background:white;
   padding:20px;
-  border-radius:8px;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,.08);
   margin-bottom:20px;
-  box-shadow:0 2px 6px rgba(0,0,0,.1);
 }
 h2{margin-top:0;color:#0f172a}
 input,select,button{
-  padding:10px;
   width:100%;
+  padding:10px;
   margin-bottom:10px;
+  font-size:15px;
 }
 button{
   background:#2563eb;
   color:white;
   border:none;
-  border-radius:5px;
+  border-radius:6px;
   cursor:pointer;
 }
 button:hover{background:#1d4ed8}
-.student{
-  border-bottom:1px solid #ddd;
-  padding:10px 0;
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#020617;
+  display:flex;
 }
-.progress-good{color:green}
-.progress-bad{color:red}
-.progress-stable{color:#555}
+.bottom-nav button{
+  flex:1;
+  background:none;
+  color:white;
+  border:none;
+  padding:14px;
+  font-size:14px;
+}
+.bottom-nav button.active{
+  background:#1e293b;
+}
+.student{
+  border-bottom:1px solid #e5e7eb;
+  padding:8px 0;
+}
 canvas{
-  background:#f9fafb;
-  border:1px solid #ddd;
+  border:1px solid #e5e7eb;
+  background:#fff;
   margin-top:10px;
 }
+.good{color:green}
+.bad{color:red}
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>Student Progress Analyzer</h1>
-<p>Teacher Friendly Academic Tracking System</p>
+<h1>School Academic System</h1>
+<p>Professional Student Progress Analyzer</p>
 </header>
 
-<div class="container">
-
+<!-- ADMISSION -->
+<section id="admission" class="active">
 <div class="card">
-<h2>Admission / Add Student</h2>
-<input id="name" placeholder="Student Name">
-<select id="gender">
+<h2>School Admission</h2>
+<input id="adName" placeholder="Student Name">
+<select id="adGender">
   <option>Boys</option>
   <option>Girls</option>
 </select>
-<select id="class">
+<select id="adClass">
   <option>Class 6</option>
   <option>Class 7</option>
   <option>Class 8</option>
 </select>
-<button onclick="addStudent()">Add Student</button>
+<button onclick="addAdmission()">Confirm Admission</button>
+</div>
+<div class="card">
+<h2>Admitted Students</h2>
+<div id="adList"></div>
+</div>
+</section>
+
+<!-- ADD STUDENT FOR PROGRESS -->
+<section id="progressAdd">
+<div class="card">
+<h2>Add Student for Progress Tracking</h2>
+<input id="pName" placeholder="Student Name">
+<button onclick="addProgressStudent()">Add Student</button>
 </div>
 
 <div class="card">
 <h2>Add Monthly Marks</h2>
-<select id="studentSelect"></select>
-<select id="month">
+<select id="pSelect"></select>
+<select id="pMonth">
   <option>January</option>
   <option>February</option>
   <option>March</option>
 </select>
-<input id="subject" placeholder="Subject">
-<input id="marks" type="number" placeholder="Marks (out of 100)">
-<button onclick="addMarks()">Save Marks</button>
+<input id="pMarks" type="number" placeholder="Marks (out of 100)">
+<button onclick="saveMarks()">Save Marks</button>
 </div>
+</section>
 
+<!-- GRAPH -->
+<section id="graphs">
 <div class="card">
-<h2>Student Progress</h2>
-<div id="students"></div>
+<h2>Progress Graph & Analysis</h2>
+<select id="gSelect" onchange="drawGraph()"></select>
+<p id="analysis"></p>
+<canvas id="chart" width="320" height="180"></canvas>
 </div>
+</section>
 
+<!-- NAV -->
+<div class="bottom-nav">
+<button class="active" onclick="openTab('admission',this)">Admission</button>
+<button onclick="openTab('progressAdd',this)">Add Student</button>
+<button onclick="openTab('graphs',this)">Graphs</button>
 </div>
 
 <script>
+let admissions=[];
 let students=[];
 
-function addStudent(){
-  let name=document.getElementById("name").value.trim();
-  if(!name){alert("Enter name");return;}
-  students.push({
-    name,
-    gender:gender.value,
-    className:document.getElementById("class").value,
-    records:{}
-  });
-  name.value="";
-  updateSelect();
-  render();
+function openTab(id,btn){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".bottom-nav button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
 }
 
-function updateSelect(){
-  studentSelect.innerHTML="";
+function addAdmission(){
+  if(!adName.value) return alert("Enter name");
+  admissions.push({
+    name:adName.value,
+    gender:adGender.value,
+    class:adClass.value
+  });
+  adName.value="";
+  renderAdmissions();
+}
+
+function renderAdmissions(){
+  adList.innerHTML="";
+  admissions.forEach(s=>{
+    adList.innerHTML+=`<div class="student">${s.name} (${s.gender}, ${s.class})</div>`;
+  });
+}
+
+function addProgressStudent(){
+  if(!pName.value) return alert("Enter name");
+  students.push({name:pName.value,marks:{}});
+  pName.value="";
+  updateSelects();
+}
+
+function updateSelects(){
+  pSelect.innerHTML="";
+  gSelect.innerHTML="";
   students.forEach((s,i)=>{
     let o=document.createElement("option");
-    o.value=i;
-    o.text=s.name+" ("+s.className+")";
-    studentSelect.add(o);
+    o.value=i;o.text=s.name;
+    pSelect.add(o);
+    gSelect.add(o.cloneNode(true));
   });
 }
 
-function addMarks(){
-  let s=students[studentSelect.value];
-  let m=month.value;
-  let sub=subject.value;
-  let mark=Number(marks.value);
-  if(!sub||!mark){alert("Fill all");return;}
-  if(!s.records[m]) s.records[m]={};
-  s.records[m][sub]=mark;
-  subject.value="";marks.value="";
-  render();
+function saveMarks(){
+  let s=students[pSelect.value];
+  let m=pMonth.value;
+  s.marks[m]=Number(pMarks.value);
+  pMarks.value="";
 }
 
-function grade(p){
-  if(p>=80) return "A";
-  if(p>=65) return "B";
-  if(p>=50) return "C";
-  return "D";
-}
-
-function render(){
-  studentsDiv.innerHTML="";
-  students.forEach(s=>{
-    let months=Object.keys(s.records);
-    let latest=months[months.length-1];
-    let prev=months[months.length-2];
-    let total=0,count=0;
-    if(latest){
-      for(let k in s.records[latest]){
-        total+=s.records[latest][k];count++;
-      }
-    }
-    let perc=count?Math.round(total/count):0;
-    let diff=0;
-    if(prev){
-      let t=0,c=0;
-      for(let k in s.records[prev]){
-        t+=s.records[prev][k];c++;
-      }
-      diff=perc-Math.round(t/c);
-    }
-    let status=diff>0?"Improved":"Stable";
-    let cls="progress-stable";
-    if(diff>0)cls="progress-good";
-    if(diff<0){status="Declined";cls="progress-bad";}
-    let div=document.createElement("div");
-    div.className="student";
-    div.innerHTML=`
-      <strong>${s.name}</strong> (${s.gender}, ${s.className})<br>
-      Percentage: ${perc}% | Grade: ${grade(perc)}
-      <span class="${cls}">(${status})</span>
-      <canvas width="300" height="100"></canvas>
-    `;
-    studentsDiv.appendChild(div);
-    draw(div.querySelector("canvas"),months,s.records);
-  });
-}
-
-function draw(c,months,rec){
-  let ctx=c.getContext("2d");
-  ctx.clearRect(0,0,c.width,c.height);
-  ctx.beginPath();ctx.moveTo(20,80);
+function drawGraph(){
+  let s=students[gSelect.value];
+  let ctx=chart.getContext("2d");
+  ctx.clearRect(0,0,chart.width,chart.height);
+  let months=Object.keys(s.marks);
+  if(months.length<2){
+    analysis.innerText="Add at least two months to analyze progress.";
+    return;
+  }
+  ctx.beginPath();
+  ctx.moveTo(20,160);
   months.forEach((m,i)=>{
-    let t=0,cnt=0;
-    for(let k in rec[m]){t+=rec[m][k];cnt++;}
-    let p=cnt?t/cnt:0;
-    let x=20+i*80;
-    let y=80-p*0.6;
+    let x=20+i*100;
+    let y=160-s.marks[m];
     ctx.lineTo(x,y);
-    ctx.fillText(m[0],x-5,95);
+    ctx.fillText(m[0],x-5,175);
   });
   ctx.strokeStyle="#2563eb";
   ctx.stroke();
+
+  let diff=s.marks[months.at(-1)]-s.marks[months.at(-2)];
+  let perc=Math.round(s.marks[months.at(-1)]);
+  analysis.innerHTML=
+    `Percentage: <b>${perc}%</b> |
+     <span class="${diff>=0?'good':'bad'}">
+     ${diff>=0?'Improved':'Declined'}
+     </span>`;
 }
 </script>
 
