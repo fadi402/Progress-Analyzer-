@@ -2,227 +2,159 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>School Progress Analyzer</title>
+<title>Kernel Fadi — Secure Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
 body{
-  margin:0;
-  font-family:Segoe UI, Arial, sans-serif;
-  background:#f1f5f9;
+    height:100vh;
+    background: radial-gradient(circle at top, #111 0%, #000 70%);
+    overflow:hidden;
+    color:#fff;
 }
-header{
-  background:#0f172a;
-  color:white;
-  padding:16px;
-  text-align:center;
+
+/* Kernel Fadi mark */
+.brand{
+    position:absolute;
+    top:20px;
+    right:30px;
+    font-size:14px;
+    letter-spacing:2px;
+    color:#9aa0a6;
+    opacity:0.9;
 }
-section{
-  display:none;
-  padding:20px;
+
+/* Login Card */
+.login-box{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:340px;
+    padding:35px;
+    background:rgba(20,20,20,0.75);
+    backdrop-filter: blur(14px);
+    border-radius:14px;
+    box-shadow:0 0 40px rgba(0,0,0,0.9);
+    border:1px solid rgba(255,255,255,0.08);
 }
-section.active{display:block}
-.card{
-  background:white;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 4px 10px rgba(0,0,0,.08);
-  margin-bottom:20px;
+
+.login-box h2{
+    text-align:center;
+    margin-bottom:25px;
+    font-weight:500;
+    letter-spacing:1px;
 }
-h2{margin-top:0;color:#0f172a}
-input,select,button{
-  width:100%;
-  padding:10px;
-  margin-bottom:10px;
-  font-size:15px;
+
+.login-box input{
+    width:100%;
+    padding:12px;
+    margin:12px 0;
+    background:#0b0b0b;
+    border:1px solid #2a2a2a;
+    border-radius:8px;
+    color:#fff;
+    outline:none;
 }
-button{
-  background:#2563eb;
-  color:white;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
+
+.login-box input:focus{
+    border-color:#555;
 }
-button:hover{background:#1d4ed8}
-.bottom-nav{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:#020617;
-  display:flex;
+
+.login-box button{
+    width:100%;
+    margin-top:18px;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:linear-gradient(135deg,#444,#222);
+    color:#fff;
+    font-size:15px;
+    cursor:pointer;
+    transition:0.3s;
 }
-.bottom-nav button{
-  flex:1;
-  background:none;
-  color:white;
-  border:none;
-  padding:14px;
-  font-size:14px;
+
+.login-box button:hover{
+    background:linear-gradient(135deg,#666,#333);
 }
-.bottom-nav button.active{
-  background:#1e293b;
+
+/* Spider */
+.spider{
+    position:absolute;
+    width:26px;
+    height:26px;
+    background:#7a7a7a;
+    border-radius:50%;
+    box-shadow:
+        -10px 8px 0 -6px #7a7a7a,
+        10px 8px 0 -6px #7a7a7a;
+    animation: crawl 22s linear infinite;
 }
-.student{
-  border-bottom:1px solid #e5e7eb;
-  padding:8px 0;
+
+.spider::before,
+.spider::after{
+    content:"";
+    position:absolute;
+    width:2px;
+    height:18px;
+    background:#7a7a7a;
+    top:14px;
 }
-canvas{
-  border:1px solid #e5e7eb;
-  background:#fff;
-  margin-top:10px;
+
+.spider::before{
+    left:-6px;
+    transform:rotate(25deg);
 }
-.good{color:green}
-.bad{color:red}
+
+.spider::after{
+    right:-6px;
+    transform:rotate(-25deg);
+}
+
+@keyframes crawl{
+    0%   { top:10%;  left:-10%; }
+    25%  { top:30%;  left:110%; }
+    50%  { top:60%;  left:-10%; }
+    75%  { top:85%;  left:110%; }
+    100% { top:10%;  left:-10%; }
+}
+
+/* Footer glow line */
+.glow{
+    position:absolute;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:2px;
+    background:linear-gradient(90deg, transparent, #444, transparent);
+}
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>School Academic System</h1>
-<p>Professional Student Progress Analyzer</p>
-</header>
+<div class="brand">Kernel Fadi</div>
 
-<!-- ADMISSION -->
-<section id="admission" class="active">
-<div class="card">
-<h2>School Admission</h2>
-<input id="adName" placeholder="Student Name">
-<select id="adGender">
-  <option>Boys</option>
-  <option>Girls</option>
-</select>
-<select id="adClass">
-  <option>Class 6</option>
-  <option>Class 7</option>
-  <option>Class 8</option>
-</select>
-<button onclick="addAdmission()">Confirm Admission</button>
-</div>
-<div class="card">
-<h2>Admitted Students</h2>
-<div id="adList"></div>
-</div>
-</section>
-
-<!-- ADD STUDENT FOR PROGRESS -->
-<section id="progressAdd">
-<div class="card">
-<h2>Add Student for Progress Tracking</h2>
-<input id="pName" placeholder="Student Name">
-<button onclick="addProgressStudent()">Add Student</button>
+<div class="login-box">
+    <h2>Secure Access</h2>
+    <input type="text" placeholder="Username">
+    <input type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
 </div>
 
-<div class="card">
-<h2>Add Monthly Marks</h2>
-<select id="pSelect"></select>
-<select id="pMonth">
-  <option>January</option>
-  <option>February</option>
-  <option>March</option>
-</select>
-<input id="pMarks" type="number" placeholder="Marks (out of 100)">
-<button onclick="saveMarks()">Save Marks</button>
-</div>
-</section>
-
-<!-- GRAPH -->
-<section id="graphs">
-<div class="card">
-<h2>Progress Graph & Analysis</h2>
-<select id="gSelect" onchange="drawGraph()"></select>
-<p id="analysis"></p>
-<canvas id="chart" width="320" height="180"></canvas>
-</div>
-</section>
-
-<!-- NAV -->
-<div class="bottom-nav">
-<button class="active" onclick="openTab('admission',this)">Admission</button>
-<button onclick="openTab('progressAdd',this)">Add Student</button>
-<button onclick="openTab('graphs',this)">Graphs</button>
-</div>
+<div class="spider"></div>
+<div class="glow"></div>
 
 <script>
-let admissions=[];
-let students=[];
-
-function openTab(id,btn){
-  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  document.querySelectorAll(".bottom-nav button").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-}
-
-function addAdmission(){
-  if(!adName.value) return alert("Enter name");
-  admissions.push({
-    name:adName.value,
-    gender:adGender.value,
-    class:adClass.value
-  });
-  adName.value="";
-  renderAdmissions();
-}
-
-function renderAdmissions(){
-  adList.innerHTML="";
-  admissions.forEach(s=>{
-    adList.innerHTML+=`<div class="student">${s.name} (${s.gender}, ${s.class})</div>`;
-  });
-}
-
-function addProgressStudent(){
-  if(!pName.value) return alert("Enter name");
-  students.push({name:pName.value,marks:{}});
-  pName.value="";
-  updateSelects();
-}
-
-function updateSelects(){
-  pSelect.innerHTML="";
-  gSelect.innerHTML="";
-  students.forEach((s,i)=>{
-    let o=document.createElement("option");
-    o.value=i;o.text=s.name;
-    pSelect.add(o);
-    gSelect.add(o.cloneNode(true));
-  });
-}
-
-function saveMarks(){
-  let s=students[pSelect.value];
-  let m=pMonth.value;
-  s.marks[m]=Number(pMarks.value);
-  pMarks.value="";
-}
-
-function drawGraph(){
-  let s=students[gSelect.value];
-  let ctx=chart.getContext("2d");
-  ctx.clearRect(0,0,chart.width,chart.height);
-  let months=Object.keys(s.marks);
-  if(months.length<2){
-    analysis.innerText="Add at least two months to analyze progress.";
-    return;
-  }
-  ctx.beginPath();
-  ctx.moveTo(20,160);
-  months.forEach((m,i)=>{
-    let x=20+i*100;
-    let y=160-s.marks[m];
-    ctx.lineTo(x,y);
-    ctx.fillText(m[0],x-5,175);
-  });
-  ctx.strokeStyle="#2563eb";
-  ctx.stroke();
-
-  let diff=s.marks[months.at(-1)]-s.marks[months.at(-2)];
-  let perc=Math.round(s.marks[months.at(-1)]);
-  analysis.innerHTML=
-    `Percentage: <b>${perc}%</b> |
-     <span class="${diff>=0?'good':'bad'}">
-     ${diff>=0?'Improved':'Declined'}
-     </span>`;
+function login(){
+    alert("Authentication system not connected.");
 }
 </script>
 
