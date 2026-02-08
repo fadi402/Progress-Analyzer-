@@ -4,8 +4,13 @@
 <meta charset="UTF-8">
 <title>3D Spider Walk</title>
 <style>
-  html, body { margin:0; padding:0; overflow:hidden; background:#111; }
-  canvas { display:block; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #111;
+  }
+  canvas { display: block; }
 </style>
 </head>
 <body>
@@ -14,89 +19,98 @@
 <script src="https://unpkg.com/three@0.158.0/examples/js/loaders/GLTFLoader.js"></script>
 
 <script>
-/* ================= SCENE & CAMERA ================= */
+/* ============ SCENE ============ */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x111111);
 
+/* ============ CAMERA ============ */
 const camera = new THREE.PerspectiveCamera(
   60,
   window.innerWidth / window.innerHeight,
   0.1,
   1000
 );
-camera.position.set(0, 8, 10);  // top-side angle
-camera.lookAt(0,0,0);
 
-/* ================= RENDERER ================= */
-const renderer = new THREE.WebGLRenderer({ antialias:true });
+/* ============ RENDERER ============ */
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-/* ================= LIGHTS ================= */
-scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-dirLight.position.set(5, 10, 5);
-scene.add(dirLight);
+/* ============ LIGHTS ============ */
+scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+const light = new THREE.DirectionalLight(0xffffff, 1.2);
+light.position.set(5, 10, 7);
+scene.add(light);
 
-/* ================= FLOOR (REFERENCE) ================= */
+/* ============ FLOOR ============ */
 const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(50,50),
-  new THREE.MeshStandardMaterial({ color:0x222222 })
+  new THREE.PlaneGeometry(100, 100),
+  new THREE.MeshStandardMaterial({ color: 0x222222 })
 );
-floor.rotation.x = -Math.PI/2;
+floor.rotation.x = -Math.PI / 2;
 scene.add(floor);
 
-/* ================= SPIDER ================= */
-let spider, mixer;
+/* ============ SPIDER (FORCED FIX) ============ */
+let mixer;
 const clock = new THREE.Clock();
 
 const loader = new THREE.GLTFLoader();
 loader.load(
   "animated_spider.glb",
-  function(gltf) {
-    spider = gltf.scene;
-    spider.scale.set(1.5,1.5,1.5);
-    spider.position.set(-6,0,0);
-    spider.rotation.y = Math.PI/2; // walking forward
-    scene.add(spider);
+  (gltf) => {
+    const model = gltf.scene;
 
-    mixer = new THREE.AnimationMixer(spider);
-    if(gltf.animations.length > 0){
-      gltf.animations.forEach((clip) => {
-        mixer.clipAction(clip).play();
-      });
+    // 🔧 material fix
+    model.traverse((child) => {
+      if (child.isMesh) {
+        child.material.side = THREE.DoubleSide;
+      }
+    });
+
+    // 🔧 center + scale fix
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3()).length();
+    const center = box.getCenter(new THREE.Vector3());
+
+    model.position.sub(center);
+    const scale = 4 / size;
+    model.scale.setScalar(scale);
+
+    scene.add(model);
+
+    // 🔧 camera auto-fit (CRITICAL)
+    camera.position.set(0, size, size * 1.6);
+    camera.lookAt(0, 0, 0);
+
+    // 🔧 animation
+    if (gltf.animations.length) {
+      mixer = new THREE.AnimationMixer(model);
+      gltf.animations.forEach(anim =>
+        mixer.clipAction(anim).play()
+      );
     }
+
+    console.log("✅ Spider loaded & forced into view");
   },
   undefined,
-  function(error){
-    console.error("GLB load failed:", error);
-    alert("Spider GLB file load failed. Check console.");
+  (err) => {
+    console.error("❌ GLB load error", err);
+    alert("GLB NOT LOADED — check Network tab");
   }
 );
 
-/* ================= WALK ================= */
-const WALK_SPEED = 0.03;
-const LIMIT = 6;
-
-/* ================= ANIMATE ================= */
-function animate(){
+/* ============ LOOP ============ */
+function animate() {
   requestAnimationFrame(animate);
-  const delta = clock.getDelta();
-  if(mixer) mixer.update(delta);
-
-  if(spider){
-    spider.position.x += WALK_SPEED;
-    if(spider.position.x > LIMIT) spider.position.x = -LIMIT;
-  }
-
-  renderer.render(scene,camera);
+  if (mixer) mixer.update(clock.getDelta());
+  renderer.render(scene, camera);
 }
 animate();
 
-/* ================= RESIZE ================= */
-window.addEventListener("resize",()=>{
-  camera.aspect = window.innerWidth/window.innerHeight;
+/* ============ RESIZE ============ */
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
