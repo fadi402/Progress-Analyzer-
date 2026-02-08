@@ -1,58 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
-<h
-  bodyMat
-);
-abdomen.position.z = -0.6;
+<head>
+<meta charset="UTF-8">
+<title>Kernel Fadi | Secure Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-const thorax = new THREE.Mesh(
-  new THREE.SphereGeometry(0.8, 32, 32),
-  bodyMat
-);
-
-spider.add(abdomen, thorax);
-
-/* Legs */
-const legs = [];
-for (let i = 0; i < 8; i++) {
-  const leg = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.05, 0.08, 3, 12),
-    bodyMat
-  );
-  leg.rotation.z = Math.PI / 2;
-  leg.position.x = (i < 4 ? -1.2 : 1.2);
-  leg.position.z = (i % 4 - 1.5) * 0.6;
-  spider.add(leg);
-  legs.push(leg);
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
 }
 
-/* Animation */
-let t = 0;
-let dir = 1;
-
-function animate() {
-  requestAnimationFrame(animate);
-  t += 0.05;
-
-  spider.position.x += 0.03 * dir;
-  spider.position.y = Math.sin(t * 2) * 0.1;
-
-  if (spider.position.x > 8 || spider.position.x < -8) dir *= -1;
-
-  legs.forEach((leg, i) => {
-    leg.rotation.y = Math.sin(t * 3 + i) * 0.6;
-  });
-
-  renderer.render(scene, camera);
+/* === Spider background wrapper === */
+.spider-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
 }
-animate();
 
-/* Resize */
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-</script>
+/* IMPORTANT: iframe sizing */
+.spider-bg iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* === Login Overlay === */
+.login-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 340px;
+  padding: 40px;
+  background: rgba(12, 12, 12, 0.78);
+  backdrop-filter: blur(16px);
+  border-radius: 14px;
+  box-shadow: 0 0 60px rgba(0,0,0,0.95);
+  z-index: 2;
+  color: #fff;
+}
+
+.login-box h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  letter-spacing: 1px;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 14px;
+  margin: 12px 0;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #fff;
+  outline: none;
+}
+
+.login-box input:focus {
+  border-color: #777;
+  box-shadow: 0 0 12px rgba(180,180,180,0.4);
+}
+
+.login-box button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 18px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #444, #222);
+  color: #fff;
+  cursor: pointer;
+}
+
+/* === Branding === */
+.brand {
+  position: fixed;
+  top: 20px;
+  right: 30px;
+  z-index: 2;
+  font-weight: bold;
+  letter-spacing: 3px;
+  color: #cfd3d6;
+}
+</style>
+</head>
+
+<body>
+
+<!-- BRAND -->
+<div class="brand">KERNEL FADI</div>
+
+<!-- REAL 3D SPIDER BACKGROUND -->
+<div class="spider-bg">
+  <iframe
+    title="Spider"
+    allow="autoplay; fullscreen; xr-spatial-tracking"
+    allowfullscreen
+    src="https://sketchfab.com/models/20a23506ad244502b3237a5c2e4e0451/embed?autostart=1&ui_controls=0&ui_infos=0&ui_watermark=0">
+  </iframe>
+</div>
+
+<!-- LOGIN FORM -->
+<div class="login-box">
+  <h2>Secure Login</h2>
+  <input type="text" placeholder="Username">
+  <input type="password" placeholder="Password">
+  <button>Login</button>
+</div>
+
 </body>
 </html>
