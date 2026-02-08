@@ -5,15 +5,8 @@
 <title>3D Spider Walk</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background: #f4f4f4; /* professional neutral */
-  }
-  canvas {
-    display: block;
-  }
+  html, body { margin: 0; padding: 0; overflow: hidden; background: #f4f4f4; }
+  canvas { display: block; }
 </style>
 </head>
 <body>
@@ -33,14 +26,13 @@ animate();
 function init() {
   scene = new THREE.Scene();
 
-  // Camera: Top + side angle
-  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+  // Camera
+  camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
   camera.position.set(5, 6, 7);
   camera.lookAt(0, 0, 0);
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
   document.body.appendChild(renderer.domElement);
 
   // Lights
@@ -60,26 +52,25 @@ function init() {
   // Load Spider
   const loader = new GLTFLoader();
   loader.load(
-    "./animated_spider.glb", // ✅ correct filename
+    "./animated_spider.glb", // Make sure this file is in the same folder
     (gltf) => {
       spider = gltf.scene;
 
-      // Auto-center spider
+      // Auto-center
       const box = new THREE.Box3().setFromObject(spider);
       const center = box.getCenter(new THREE.Vector3());
       spider.position.sub(center);
 
-      // Auto-scale to fit scene
+      // Auto-scale
       const size = box.getSize(new THREE.Vector3()).length();
       const scale = 4 / size;
       spider.scale.setScalar(scale);
 
       spider.position.y = 0;
-      spider.position.x = -4; // start left
+      spider.position.x = -4;
 
       scene.add(spider);
 
-      // Play animation if exists
       if (gltf.animations.length) {
         mixer = new THREE.AnimationMixer(spider);
         mixer.clipAction(gltf.animations[0]).play();
