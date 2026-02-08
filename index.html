@@ -1,92 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GLB TEST</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { margin: 0; overflow: hidden; background: #eee; }
+</style>
+</head>
+<body>
+
 <script type="module">
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js";
 import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/loaders/GLTFLoader.js";
 
-let scene, camera, renderer, spider, mixer;
-let clock = new THREE.Clock();
-let direction = 1;
-let speed = 0.02;
+const scene = new THREE.Scene();
 
-init();
-animate();
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
+camera.position.set(0, 2, 5);
 
-function init() {
-  scene = new THREE.Scene();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 6, 10);
+scene.add(new THREE.AmbientLight(0xffffff, 1));
 
-  renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
-  document.body.appendChild(renderer.domElement);
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(5, 10, 5);
+scene.add(light);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+const loader = new GLTFLoader();
+loader.load(
+  "./spider.glb",
+  (gltf) => {
+    const model = gltf.scene;
 
-  const light = new THREE.DirectionalLight(0xffffff, 0.8);
-  light.position.set(5, 10, 5);
-  scene.add(light);
+    // hard scale (force visible)
+    model.scale.set(5, 5, 5);
+    model.position.set(0, 0, 0);
 
-  const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(100, 100),
-    new THREE.MeshStandardMaterial({ color: 0xffffff })
-  );
-  ground.rotation.x = -Math.PI / 2;
-  scene.add(ground);
-
-  const loader = new GLTFLoader();
-  loader.load("./spider.glb", (gltf) => {
-
-    spider = gltf.scene;
-
-    // 🔥 AUTO CENTER
-    const box = new THREE.Box3().setFromObject(spider);
-    const center = box.getCenter(new THREE.Vector3());
-    spider.position.sub(center);
-
-    // 🔥 AUTO SCALE
-    const size = box.getSize(new THREE.Vector3()).length();
-    const scale = 4 / size;
-    spider.scale.setScalar(scale);
-
-    spider.position.y = 0;
-    spider.position.x = -4;
-
-    scene.add(spider);
-
-    if (gltf.animations.length) {
-      mixer = new THREE.AnimationMixer(spider);
-      mixer.clipAction(gltf.animations[0]).play();
-    }
-
-  });
-
-  window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-}
+    scene.add(model);
+    console.log("✅ GLB LOADED");
+  },
+  undefined,
+  (e) => {
+    console.error("❌ GLB ERROR", e);
+  }
+);
 
 function animate() {
   requestAnimationFrame(animate);
-
-  const delta = clock.getDelta();
-  if (mixer) mixer.update(delta);
-
-  if (spider) {
-    spider.position.x += speed * direction;
-
-    if (spider.position.x > 4) {
-      direction = -1;
-      spider.rotation.y = Math.PI;
-    }
-    if (spider.position.x < -4) {
-      direction = 1;
-      spider.rotation.y = 0;
-    }
-  }
-
   renderer.render(scene, camera);
 }
+animate();
 </script>
+
+</body>
+</html>
