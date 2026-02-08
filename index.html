@@ -54,21 +54,25 @@ const clock = new THREE.Clock();
 const loader = new THREE.GLTFLoader();
 loader.load(
   "animated_spider.glb",
-  (gltf) => {
+  function(gltf) {
     spider = gltf.scene;
     spider.scale.set(1.5,1.5,1.5);
     spider.position.set(-6,0,0);
     spider.rotation.y = Math.PI/2; // walking forward
-
     scene.add(spider);
 
     mixer = new THREE.AnimationMixer(spider);
-    gltf.animations.forEach((clip) => {
-      mixer.clipAction(clip).play();
-    });
+    if(gltf.animations.length > 0){
+      gltf.animations.forEach((clip) => {
+        mixer.clipAction(clip).play();
+      });
+    }
   },
   undefined,
-  (err) => { console.error("GLB load error:", err); }
+  function(error){
+    console.error("GLB load failed:", error);
+    alert("Spider GLB file load failed. Check console.");
+  }
 );
 
 /* ================= WALK ================= */
@@ -76,10 +80,9 @@ const WALK_SPEED = 0.03;
 const LIMIT = 6;
 
 /* ================= ANIMATE ================= */
-function animate() {
+function animate(){
   requestAnimationFrame(animate);
   const delta = clock.getDelta();
-
   if(mixer) mixer.update(delta);
 
   if(spider){
@@ -87,12 +90,12 @@ function animate() {
     if(spider.position.x > LIMIT) spider.position.x = -LIMIT;
   }
 
-  renderer.render(scene, camera);
+  renderer.render(scene,camera);
 }
 animate();
 
 /* ================= RESIZE ================= */
-window.addEventListener("resize", ()=>{
+window.addEventListener("resize",()=>{
   camera.aspect = window.innerWidth/window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
