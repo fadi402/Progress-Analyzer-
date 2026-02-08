@@ -1,176 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Kernel Fadi | Secure Login</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="UTF-8" />
+<title>Kernel Fadi | Secure Access</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
-
-body{
-    height:100vh;
-    background:#050505;
-    overflow:hidden;
-    color:#fff;
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #050505;
+  font-family: Arial, sans-serif;
+  color: white;
 }
 
-/* Branding */
-.brand{
-    position:absolute;
-    top:24px;
-    right:40px;
-    font-size:18px;
-    letter-spacing:3px;
-    font-weight:700;
-    color:#cfd3d6;
-    text-transform:uppercase;
+#ui {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15,15,15,0.8);
+  padding: 40px;
+  border-radius: 14px;
+  width: 340px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 0 60px rgba(0,0,0,0.9);
 }
 
-/* Login Box */
-.login{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    width:360px;
-    padding:40px;
-    background:rgba(15,15,15,0.75);
-    backdrop-filter:blur(18px);
-    border-radius:16px;
-    border:1px solid rgba(255,255,255,0.08);
-    box-shadow:0 0 60px rgba(0,0,0,0.9);
+#ui h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  letter-spacing: 1px;
 }
 
-.login h2{
-    text-align:center;
-    margin-bottom:28px;
-    font-weight:600;
-    letter-spacing:1px;
+#ui input {
+  width: 100%;
+  padding: 14px;
+  margin: 12px 0;
+  background: #0b0b0b;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #fff;
+  outline: none;
 }
 
-.login input{
-    width:100%;
-    padding:14px;
-    margin:14px 0;
-    background:#0a0a0a;
-    border-radius:10px;
-    border:1px solid #222;
-    color:#fff;
-    outline:none;
-    box-shadow:0 0 0 rgba(120,120,120,0);
-    transition:0.3s;
+#ui input:focus {
+  border-color: #777;
+  box-shadow: 0 0 14px rgba(180,180,180,0.4);
 }
 
-.login input:focus{
-    border-color:#777;
-    box-shadow:0 0 14px rgba(150,150,150,0.35);
+#ui button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 18px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg,#444,#222);
+  color: white;
+  cursor: pointer;
 }
 
-.login button{
-    margin-top:20px;
-    width:100%;
-    padding:14px;
-    background:linear-gradient(135deg,#3a3a3a,#1a1a1a);
-    border:none;
-    border-radius:10px;
-    color:#fff;
-    font-size:15px;
-    cursor:pointer;
-    transition:0.3s;
-}
-.login button:hover{background:linear-gradient(135deg,#5a5a5a,#2a2a2a);}
-
-/* Spider Container */
-#spiderWrap{
-    position:absolute;
-    width:140px;
-    pointer-events:none;
-}
-
-/* Particle trail */
-.particle{
-    position:absolute;
-    width:6px;
-    height:6px;
-    transform:rotate(45deg);
-    opacity:0.9;
-    animation:fade 1.2s linear forwards;
-}
-
-@keyframes fade{
-    to{opacity:0;transform:rotate(45deg) scale(0.2);}
+#brand {
+  position: absolute;
+  top: 22px;
+  right: 36px;
+  font-size: 18px;
+  letter-spacing: 3px;
+  font-weight: bold;
+  color: #cfd3d6;
 }
 </style>
 </head>
 
 <body>
+<div id="brand">KERNEL FADI</div>
 
-<div class="brand">Kernel Fadi</div>
-
-<div class="login">
-    <h2>Secure Access</h2>
-    <input type="text" placeholder="Username">
-    <input type="password" placeholder="Password">
-    <button>Login</button>
+<div id="ui">
+  <h2>Secure Login</h2>
+  <input placeholder="Username">
+  <input type="password" placeholder="Password">
+  <button>Login</button>
 </div>
 
-<!-- Realistic SVG Spider -->
-<div id="spiderWrap">
-<svg width="140" height="120" viewBox="0 0 140 120">
-    <!-- legs -->
-    <g stroke="#6e6e6e" stroke-width="3" stroke-linecap="round">
-        <path d="M30 60 C5 40,5 30,10 20"/>
-        <path d="M30 70 C5 70,5 85,15 95"/>
-        <path d="M40 55 C15 35,20 20,30 10"/>
-        <path d="M40 75 C20 85,30 105,45 110"/>
-
-        <path d="M110 60 C135 40,135 30,130 20"/>
-        <path d="M110 70 C135 70,135 85,125 95"/>
-        <path d="M100 55 C125 35,120 20,110 10"/>
-        <path d="M100 75 C120 85,110 105,95 110"/>
-    </g>
-
-    <!-- body -->
-    <ellipse cx="70" cy="55" rx="18" ry="14" fill="#7a7a7a"/>
-    <ellipse cx="70" cy="78" rx="22" ry="18" fill="#5e5e5e"/>
-</svg>
-</div>
+<!-- Three.js -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 
 <script>
-const spider = document.getElementById("spiderWrap");
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x050505, 10, 40);
+
+const camera = new THREE.PerspectiveCamera(
+  60,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  100
+);
+camera.position.set(0, 3, 10);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+document.body.appendChild(renderer.domElement);
+
+/* Lights */
+scene.add(new THREE.AmbientLight(0x404040, 1.5));
+const light = new THREE.DirectionalLight(0xffffff, 2);
+light.position.set(5, 10, 5);
+scene.add(light);
+
+/* Ground */
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(200, 200),
+  new THREE.MeshStandardMaterial({ color: 0x060606 })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -1;
+scene.add(ground);
+
+/* Spider Group */
+const spider = new THREE.Group();
+scene.add(spider);
+
+/* Body */
+const bodyMat = new THREE.MeshStandardMaterial({ color: 0x555555 });
+const abdomen = new THREE.Mesh(
+  new THREE.SphereGeometry(1.1, 32, 32),
+  bodyMat
+);
+abdomen.position.z = -0.6;
+
+const thorax = new THREE.Mesh(
+  new THREE.SphereGeometry(0.8, 32, 32),
+  bodyMat
+);
+
+spider.add(abdomen, thorax);
+
+/* Legs */
+const legs = [];
+for (let i = 0; i < 8; i++) {
+  const leg = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.05, 0.08, 3, 12),
+    bodyMat
+  );
+  leg.rotation.z = Math.PI / 2;
+  leg.position.x = (i < 4 ? -1.2 : 1.2);
+  leg.position.z = (i % 4 - 1.5) * 0.6;
+  spider.add(leg);
+  legs.push(leg);
+}
+
+/* Animation */
+let t = 0;
 let dir = 1;
 
-function moveSpider(){
-    const h = window.innerHeight;
-    const y = Math.random()*(h-160)+40;
-    dir *= -1;
+function animate() {
+  requestAnimationFrame(animate);
+  t += 0.05;
 
-    spider.style.transition = "none";
-    spider.style.top = y+"px";
-    spider.style.left = dir>0 ? "-160px" : window.innerWidth+160+"px";
+  spider.position.x += 0.03 * dir;
+  spider.position.y = Math.sin(t * 2) * 0.1;
 
-    setTimeout(()=>{
-        spider.style.transition = "left 18s linear";
-        spider.style.left = dir>0 ? window.innerWidth+160+"px" : "-160px";
-    },50);
+  if (spider.position.x > 8 || spider.position.x < -8) dir *= -1;
+
+  legs.forEach((leg, i) => {
+    leg.rotation.y = Math.sin(t * 3 + i) * 0.6;
+  });
+
+  renderer.render(scene, camera);
 }
-moveSpider();
-setInterval(moveSpider,19000);
+animate();
 
-/* particles */
-setInterval(()=>{
-    const p = document.createElement("div");
-    p.className="particle";
-    p.style.left = (spider.offsetLeft+70)+"px";
-    p.style.top = (spider.offsetTop+70)+"px";
-    p.style.background = `hsl(${Math.random()*360},70%,60%)`;
-    document.body.appendChild(p);
-    setTimeout(()=>p.remove(),1200);
-},140);
+/* Resize */
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 </script>
-
 </body>
 </html>
